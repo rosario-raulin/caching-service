@@ -82,17 +82,18 @@ class DiligentWorker(threading.Thread):
 		CACHE[str(self.x)] = val
 		DiligentWorker.lock.release()
 
+workingAt = {}
+worker = []
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
 	def thread_filter(x):
 		x.join(0.001)
 		return x.isAlive()
 
-	workingAt = {}
-	worker = []
 	xs = str(x)
 	if xs in CACHE:
 		val = CACHE[xs]
+		global worker
 		worker = filter(thread_filter, worker)
 		for n in (x+1, x+2):
 			if not n in workingAt:
