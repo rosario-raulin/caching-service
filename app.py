@@ -70,7 +70,7 @@ def negative_service(x):
 	return cache_service(x, True)
 
 class DiligentWorker(threading.Thread):
-	lock = threading.Thread.Lock()
+	lock = threading.Lock()
 
 	def __init__(self, x):
 		threading.Thread.__init__(self)
