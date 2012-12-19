@@ -78,9 +78,9 @@ class DiligentWorker(threading.Thread):
 	
 	def run(self):
 		val = create_and_calc(self.x)
-		lock.acquire()
+		DiligentWorker.lock.acquire()
 		CACHE[str(self.x)] = val
-		lock.release()
+		DiligentWorker.lock.release()
 
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
