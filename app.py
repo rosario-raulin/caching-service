@@ -50,21 +50,6 @@ def create_and_calc(x):
 	gen_random_file(fname, x * 1024 * 1024)
 	return str(is_last_byte_even(calc_hmac(fname)))
 
-class DiligentWorker(threading.Thread):
-	lock = threading.Lock()
-
-	def __init__(self, x):
-		threading.Thread.__init__(self)
-		self.x = x
-		self.xs = str(x)
-		
-	def run(self):
-		if not self.xs in CACHE:
-			value = create_and_calc(self.x)
-			DiligentWorker.lock.acquire()
-			CACHE[self.xs] = value
-			DiligentWorker.lock.release()
-
 @app.route('/<int:x>')
 def service(x):
 	return create_and_calc(x)
@@ -84,35 +69,46 @@ def cache_service(x, negative = False):
 def negative_service(x):
 	return cache_service(x, True)
 
-THREADS = []
+class DiligentWorker(threading.Thread):
+	lock = threading.Thread.Lock()
+
+	def __init__(self, x):
+		threading.Thread.__init__(self)
+		self.x = x
+	
+	def run(self):
+		val = create_and_calc(self.x)
+		lock.acquire()
+		CACHE[str(self.x)] = val
+		lock.release()
 
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
+	def thread_filer(x):
+		x.join(0.001)
+		return x.isAlive()
 
-	global THREADS
-	ts = []
-	for thread in THREADS:
-		thread.join(0.001)
-		if thread.isAlive():
-			ts.append(thread)
-	print ts
-	THREADS = ts
-	print THREADS
-
+	workingAt = {}
+	worker = []
 	xs = str(x)
 	if xs in CACHE:
 		val = CACHE[xs]
-		w1 = DiligentWorker(x + 1)
-		w2 = DiligentWorker(x - 1)
-		THREADS.append(w1)
-		THREADS.append(w2)
-		w1.start()
-		w2.start()
+		worker = filter(thread_filter, worker)
+		for n in (x+1, x+2):
+			if not n in workingAt:
+				w = DiligentWorker(n)
+				worker.append(w)
+				workingAt[n] = w
+				w.start()
 		return val
+	elif x in workingAt:
+		worker = workingAt[x]
+		worker.join()
+		return CACHE[xs]
 	else:
-		value = create_and_calc(x)
-		CACHE[xs] = value
-		return value
+		val = create_and_calc(x)
+		CACHE[xs] = val
+		return val
 
 @app.route('/clear')
 def clear_cache():
