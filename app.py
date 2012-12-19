@@ -84,7 +84,7 @@ class DiligentWorker(threading.Thread):
 
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
-	def thread_filer(x):
+	def thread_filter(x):
 		x.join(0.001)
 		return x.isAlive()
 
