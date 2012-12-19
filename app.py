@@ -19,7 +19,6 @@ CACHE = pylibmc.Client(
     servers=[os.environ.get('MEMCACHE_SERVERS')],
 	username=os.environ.get('MEMCACHE_USERNAME'),
 	password=os.environ.get('MEMCACHE_PASSWORD'),
-	binary=True
 )
 
 def gen_random_file(path, size):
