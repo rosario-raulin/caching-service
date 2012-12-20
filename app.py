@@ -76,9 +76,7 @@ def diligent_service(x):
 	if x in LOCALCACHE:
 		return LOCALCACHE[x]
 	elif xs in CACHE:
-		start = time.time()
 		val = CACHE[xs]
-		app.logger.debug(time.time() - start)
 		LOCALCACHE[x] = val
 		return val
 	else:
