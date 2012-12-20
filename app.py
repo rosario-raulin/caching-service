@@ -69,46 +69,19 @@ def cache_service(x, negative = False):
 def negative_service(x):
 	return cache_service(x, True)
 
-class DiligentWorker(threading.Thread):
-	lock = threading.Lock()
-
-	def __init__(self, x):
-		threading.Thread.__init__(self)
-		self.x = x
-	
-	def run(self):
-		val = create_and_calc(self.x)
-		DiligentWorker.lock.acquire()
-		CACHE[str(self.x)] = val
-		DiligentWorker.lock.release()
-
-workingAt = {}
-worker = []
+LOCALCACHE = {}
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
-	def thread_filter(x):
-		x.join(0.001)
-		return x.isAlive()
-
-	xs = str(x)
-	if xs in CACHE:
-		val = CACHE[xs]
-		global worker
-		worker = filter(thread_filter, worker)
-		for n in (x+1, x+2):
-			if not n in workingAt:
-				w = DiligentWorker(n)
-				worker.append(w)
-				workingAt[n] = w
-				w.start()
+	if x in LOCALCACHE:
+		return LOCALCACHE[x]
+	elif x in CACHE:
+		val = CACHE[x]
+		LOCALCACHE[x] = val
 		return val
-	elif x in workingAt:
-		worker = workingAt[x]
-		worker.join()
-		return CACHE[xs]
 	else:
 		val = create_and_calc(x)
-		CACHE[xs] = val
+		CACHE[x] = val
+		LOCALCACHE[x] = val
 		return val
 
 @app.route('/clear')
