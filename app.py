@@ -74,8 +74,10 @@ CLEAR_LOCAL = False
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
 	global LOCALCACHE
+	global CLEAR_LOCAL
 	if CLEAR_LOCAL:
 		LOCALCACHE = {}
+		CLEAR_LOCAL = False
 	xs = str(x)
 	if x in LOCALCACHE:
 		return LOCALCACHE[x]
@@ -92,7 +94,7 @@ def diligent_service(x):
 @app.route('/clear')
 def clear_cache():
 	global CLEAR_LOCAL
-	CLEAR_LOCAL = {}
+	CLEAR_LOCAL = True
 	return str(CACHE.flush_all())
 	
 if __name__ == '__main__':
