@@ -72,15 +72,16 @@ def negative_service(x):
 LOCALCACHE = {}
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
+	xs = str(x)
 	if x in LOCALCACHE:
 		return LOCALCACHE[x]
-	elif x in CACHE:
-		val = CACHE[x]
+	elif xs in CACHE:
+		val = CACHE[xs]
 		LOCALCACHE[x] = val
 		return val
 	else:
 		val = create_and_calc(x)
-		CACHE[x] = val
+		CACHE[xs] = val
 		LOCALCACHE[x] = val
 		return val
 
