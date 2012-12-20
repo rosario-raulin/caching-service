@@ -87,6 +87,8 @@ def diligent_service(x):
 
 @app.route('/clear')
 def clear_cache():
+	global LOCALCACHE
+	LOCALCACHE = {}
 	return str(CACHE.flush_all())
 	
 if __name__ == '__main__':
