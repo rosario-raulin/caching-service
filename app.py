@@ -73,6 +73,7 @@ LOCALCACHE = {}
 CLEAR_LOCAL = False
 @app.route('/diligent/<int:x>')
 def diligent_service(x):
+	global LOCALCACHE
 	if CLEAR_LOCAL:
 		LOCALCACHE = {}
 	xs = str(x)
